@@ -8,7 +8,7 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 /**
  * @swagger
- * /api/register/teacherRegister:
+ * /api/auth/teacherRegister:
  *  post:
  *      summary: register user
  *      requestBody:
@@ -36,7 +36,7 @@ const router = express_1.default.Router();
 router.route("/teacherRegister").post(authController_1.createTeacher);
 /**
  * @swagger
- * /api/register/studentRegister:
+ * /api/auth/studentRegister:
  *  post:
  *      summary: register user
  *      requestBody:
@@ -62,4 +62,29 @@ router.route("/teacherRegister").post(authController_1.createTeacher);
  *
  */
 router.route("/studentRegister").post(authController_1.createStudent);
+/**
+ * @swagger
+ * /api/auth/login:
+ *  post:
+ *      summary: register Teacher
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          email:
+ *                              type: string
+ *                          password:
+ *                              type: string
+ *
+ *
+ *
+ *      responses:
+ *          201:
+ *              description: register Teacher
+ *
+ */
+router.route("/login").post(authController_1.login);
 exports.default = router;

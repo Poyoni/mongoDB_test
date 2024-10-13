@@ -18,7 +18,7 @@ app.use(express_1.default.json());
 app.use('/classroom', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.swaggerSpec));
 (0, db_1.default)();
 // Routes
-app.use("/api/register", authRoutes_1.default);
+app.use("/api/auth", authRoutes_1.default);
 // Error handling middleware
 //app.use(errorHandler);
 app.listen(PORT, () => {

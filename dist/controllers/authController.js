@@ -8,11 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createStudent = exports.createTeacher = void 0;
+exports.login = exports.createStudent = exports.createTeacher = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const teacherModel_1 = require("../models/teacherModel");
 const studentModel_1 = require("../models/studentModel");
 const classRoomModel_1 = require("../models/classRoomModel");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const createTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const teacherData = req.body;
     try {
@@ -50,66 +56,40 @@ const createStudent = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.createStudent = createStudent;
-// export const login = async (req: Request, res: Response): Promise<void> => {
-//     const { passportId, password } = req.body;
-//     try {
-//         const user = await userModel.findOne({ passportId });
-//         if (!user || user.password !== password) {
-//             res.status(401).json({ message: 'Invalid credentials' });
-//             return; 
-//         }
-//         const token = jwt.sign(
-//             { id: user._id, role: user.role },
-//             process.env.JWT_SECRET!,
-//             { expiresIn: '1h' }
-//         );
-//         res.cookie('token', token, {
-//             httpOnly: true,
-//             secure: process.env.NODE_ENV === 'production', 
-//             maxAge: 3600000, 
-//         });
-//         res.status(200).json({ message: 'Login successful' });
-//     } catch (error) {
-//         res.status(500).json({ message: "Error logging in" });
-//     }
-// }
-// [14:32, 13.10.2024] משה צלניקר: import mongoose, { Types } from "mongoose";
-// import { Request, Response, NextFunction } from "express";
-// import { Teacher } from "../models/TeacherModel.js";
-// import { Classroom } from "../models/ClassroomModel.js";
-// export const registerTeacher = async (req: Request, res: Response): Promise<void> => {
-//     try {
-//       const { name, email, password, className } = req.body;
-//       const existingTeacher = await Teacher.findOne({ email });
-//       if (existingTeacher) {
-//         res.status(400).json({ error: "Teacher already has a classroom assigned" });
-//         return;
-//       }
-//       const existingClassroom = await Classroom.findOne({ name: className });
-//       if (existingClassroom) {
-//         res.status(400).json({ error: "Classroom with this name already exists" });
-//  …
-// [14:32, 13.10.2024] משה צלניקר: import mongoose, { Schema, Document, Types } from "mongoose";
-// import validator from "validator";
-// interface ITeacher extends Document {
-//   name: string;
-//   email: string;
-//   password: string;
-//   classroom: mongoose.Types.ObjectId; 
-// }
-// const teacherSchema = new Schema<ITeacher>({
-//   name: { type: String, required: true },
-//   email: { 
-//     type: String, 
-//     required: true, 
-//     unique: true, 
-//     validate: {
-//       validator: (value: string) => validator.isEmail(value), 
-//       message: "Invalid email format", 
-//     },
-//   },
-//   password: { type: String, required: true,  match: [/^[0-9]{9}$/, "password must be 9 digits"],
-//   },
-//   classroom: { type: Schema.Types.ObjectId, ref: 'Classroom', required: true },
-// });
-// export const Teacher = mongoose.model<ITeacher>('Teacher', teacherSchema);
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = req.body;
+    try {
+        const teacher = yield teacherModel_1.Teacher.findOne({ email });
+        const student = yield studentModel_1.Student.findOne({ email });
+        let user;
+        let role;
+        let classroomId;
+        if (teacher) {
+            if (teacher.password !== password) {
+                res.status(401).json({ message: "Invalid password" });
+            }
+            user = teacher;
+            role = "teacher";
+            classroomId = teacher.classroom;
+        }
+        else if (student) {
+            if (student.password !== password) {
+                res.status(401).json({ message: "Invalid password" });
+            }
+            user = student;
+            role = "student";
+        }
+        else {
+            res.status(404).json({ message: "User not found" });
+        }
+        const token = jsonwebtoken_1.default.sign({ id: user === null || user === void 0 ? void 0 : user._id, role, classroomId }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+        });
+        res.status(200).json({ token });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "An error occurred during login." });
+    }
+});
+exports.login = login;

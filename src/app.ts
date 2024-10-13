@@ -17,7 +17,9 @@ app.use('/classroom',swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 connectDB();
 
 // Routes
-app.use("/api/register", authRouter);
+app.use("/api/auth", authRouter);
+
+
 
 
 // Error handling middleware
