@@ -10,7 +10,10 @@ interface IStudent extends Document {
 }
 
 const studentSchema = new Schema<IStudent>({
-  name: { type: String, required: true },
+  name: { 
+    type: String, 
+    required: true
+ },
   email: { 
     type: String, 
     required: true, 
@@ -25,7 +28,11 @@ const studentSchema = new Schema<IStudent>({
      required: true,
      match: [/^[0-9]{9}$/, "passwordId must be  9 digits"]
      },
-  classroom: { type: Schema.Types.ObjectId, ref: 'Classroom', required: true },
+  classroom: { 
+    type: Schema.Types.ObjectId,
+    ref: 'Classroom',
+    required: true
+ },
   grades: [
     {
       score: {

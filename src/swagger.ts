@@ -4,9 +4,9 @@ import swaggerJSDoc from "swagger-jsdoc";
 const swaggerDefintion = {
     openapi: '3.0.0',
     info:{
-        title: "blog app",
+        title: "classroom api",
         version: '1.0.0',
-        description: 'this is the description of the blog app'
+        description: 'this is the description of the classGrades app'
     },
     servers: [
         {
